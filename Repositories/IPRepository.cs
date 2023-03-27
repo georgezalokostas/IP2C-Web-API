@@ -1,12 +1,10 @@
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 
 namespace IP2C_Web_API.Repositories;
 
 public class IPRepository : IIPRepository
 {
     readonly MasterContext _context;
-    readonly string _conString = ConfigurationManager.AppSettings["Test"].ToString();
 
     public IPRepository(MasterContext context)
     {
