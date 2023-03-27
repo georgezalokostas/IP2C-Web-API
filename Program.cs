@@ -1,9 +1,12 @@
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MasterContext>();
+builder.Services.AddScoped<IIPRepository, IPRepository>();
 
 var app = builder.Build();
 
