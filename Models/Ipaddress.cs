@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace IP2C_Web_API.Models;
+﻿namespace IP2C_Web_API.Models;
 
 public partial class Ipaddress
 {

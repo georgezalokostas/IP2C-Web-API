@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-
-namespace IP2C_Web_API.Models;
+﻿namespace IP2C_Web_API.Models;
 
 public partial class MasterContext : DbContext
 {
