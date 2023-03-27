@@ -32,7 +32,7 @@ public class IPRepository : IIPRepository
         con.Open();
 
         //con query the data from the SQL, mapping them in an object with Dapper and return an array.
-
+        return new List<ReportDTO>();
     }
 }
 
