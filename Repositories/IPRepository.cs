@@ -16,21 +16,22 @@ public class IPRepository : IIPRepository
         return await _context.Countries.Select(x => x).ToListAsync();
     }
 
-    public async Task<List<ReportDTO>> GetReport(string? id)
+    public async Task<List<ReportDTO>> GetReport(string? input)
     {
-        if (string.IsNullOrWhiteSpace(id)) return new List<ReportDTO>();
-
         var builder = new ConfigurationBuilder()
-            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+        .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
         var configuration = builder.Build();
 
         using var con = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
-        con.Open();
+        await con.OpenAsync();
 
-        //con query the data from the SQL, mapping them in an object with Dapper and return an array.
-        return new List<ReportDTO>();
+        if (string.IsNullOrWhiteSpace(input))    
+            return (await con.QueryAsync<ReportDTO>(Queries.GetReportAll, null)).ToList();        
+
+        var codes = input.Split(',');
+        return (await con.QueryAsync<ReportDTO>(Queries.GetReportById, new { codes })).ToList();
     }
 }
 

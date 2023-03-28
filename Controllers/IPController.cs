@@ -1,6 +1,6 @@
 namespace IP2C_Web_API.Controllers;
 
-[Route("api/GetCountries")]
+[Route("/api")]
 [ApiController]
 public class IPController : Controller
 {
@@ -12,11 +12,14 @@ public class IPController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetIPs()
+    [Route("/api/GetReport/{codes?}")]
+    [ProducesResponseType(typeof(List<ReportDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<List<ReportDTO>>> GetReports(string? codes = "")
     {
-        var ips = await _ipRepository.GetIPs();
+        var ips = await _ipRepository.GetReport(codes);
 
-        if (!ModelState.IsValid)
+        if (!ips.Any())
             return BadRequest(ModelState);
 
         return Ok(ips);
