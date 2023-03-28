@@ -4,7 +4,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MasterContext>();
-builder.Services.AddScoped<IIPRepository, IPRepository>();
+builder.Services.AddScoped<IReport, ReportRepository>();
 
 var app = builder.Build();
 

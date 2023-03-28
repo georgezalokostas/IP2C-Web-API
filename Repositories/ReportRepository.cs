@@ -2,18 +2,13 @@ using Microsoft.Data.SqlClient;
 
 namespace IP2C_Web_API.Repositories;
 
-public class IPRepository : IIPRepository
+public class ReportRepository : IReport
 {
     readonly MasterContext _context;
 
-    public IPRepository(MasterContext context)
+    public ReportRepository(MasterContext context)
     {
         _context = context;
-    }
-
-    public async Task<List<Country>> GetIPs()
-    {
-        return await _context.Countries.Select(x => x).ToListAsync();
     }
 
     public async Task<List<ReportDTO>> GetReport(string? input)
