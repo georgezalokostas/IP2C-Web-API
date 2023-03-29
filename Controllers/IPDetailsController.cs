@@ -1,11 +1,5 @@
 namespace IP2C_Web_API.Controllers;
 
-//  
-//          lock (_packsLock) //Lock in order to avoid simultaneously check of ContainsKey and InsertPack
-//         {
-//             if (myPacks.ContainsKey(packDesc)) return;
-//         }
-
 [ApiController]
 public class IPDetailsController : Controller
 {

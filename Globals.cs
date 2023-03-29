@@ -9,6 +9,8 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Mvc;
 global using System.Linq;
 global using Dapper;
+global using System.Text.RegularExpressions;
+global using RestSharp;
 global using static Globals;
 
 public class Globals
