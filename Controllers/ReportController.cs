@@ -11,10 +11,17 @@ public class ReportController : Controller
     }
 
     [HttpGet("/api/GetReport/{codes?}")]
-    [ProducesResponseType(typeof(List<ReportDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ServiceResponse<List<ReportDTO>>>> GetReports(string? codes = "")
     {
-        return Ok(await _reportService.GetReport(codes));
+        var response = await _reportService.GetReport(codes);
+        
+        if (!response.Data!.Any())
+        {
+            response.Message = "Invalid country codes provided. Please try again with valid codes.";
+            response.Success = false;
+            return NotFound(response);
+        }
+
+        return Ok(response);
     }
 }
