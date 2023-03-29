@@ -1,6 +1,5 @@
 namespace IP2C_Web_API.Controllers;
 
-[Route("/api")]
 [ApiController]
 public class ReportController : Controller
 {
@@ -11,8 +10,7 @@ public class ReportController : Controller
         _reportService = reportService;
     }
 
-    [HttpGet]
-    [Route("/api/GetReport/{codes?}")]
+    [HttpGet("/api/GetReport/{codes?}")]
     [ProducesResponseType(typeof(List<ReportDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ServiceResponse<List<ReportDTO>>>> GetReports(string? codes = "")

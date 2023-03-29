@@ -11,9 +11,9 @@ public partial class MasterContext : DbContext
     {
     }
 
-    public virtual DbSet<Country> Countries { get; set; }
+    public virtual DbSet<Country>? Countries { get; set; }
 
-    public virtual DbSet<Ipaddress> Ipaddresses { get; set; }
+    public virtual DbSet<Ipaddress>? Ipaddresses { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
