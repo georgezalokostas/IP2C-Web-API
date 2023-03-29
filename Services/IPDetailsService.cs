@@ -53,7 +53,7 @@ public class IPDetailsService : IIPDetails
     {
         if (string.IsNullOrWhiteSpace(input)) return false;
 
-        return new Regex(@"^((25[0-5]|(2[0-4]|1\d|[1-9]|\d)\.?\b){4})$").IsMatch(input);
+        return new Regex(@"^([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3}$").IsMatch(input);
     }
 
     async Task<IPDetailsDTO?> GetCachedDataAsync(string ip)
@@ -119,7 +119,7 @@ public class IPDetailsService : IIPDetails
             {
                 TwoLetterCode = data.TwoLetterCode.ToUpper(),
                 ThreeLetterCode = data.ThreeLetterCode.ToUpper(),
-                Name = data.CountryName
+                Name = data.CountryName.Substring(0, 49)
             };
 
             _context.Countries.Add(newCountry);
