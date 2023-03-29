@@ -15,10 +15,8 @@ public class ReportController : Controller
     [Route("/api/GetReport/{codes?}")]
     [ProducesResponseType(typeof(List<ReportDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<List<ReportDTO>>> GetReports(string? codes = "")
+    public async Task<ActionResult<ServiceResponse<List<ReportDTO>>>> GetReports(string? codes = "")
     {
-        var ips = await _reportService.GetReport(codes);
-
-        return ips.Any() ? Ok(ips) : BadRequest(ModelState);
+        return Ok(await _reportService.GetReport(codes));
     }
 }

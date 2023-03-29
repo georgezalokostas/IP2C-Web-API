@@ -11,8 +11,10 @@ public class ReportService : IReport
         _context = context;
     }
 
-    public async Task<List<ReportDTO>> GetReport(string? input)
+    public async Task<ServiceResponse<List<ReportDTO>>> GetReport(string? input)
     {
+        var serviceResponse = new ServiceResponse<List<ReportDTO>>();
+
         var builder = new ConfigurationBuilder()
         .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
@@ -22,11 +24,15 @@ public class ReportService : IReport
         using var con = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
         await con.OpenAsync();
 
-        if (string.IsNullOrWhiteSpace(input))    
-            return (await con.QueryAsync<ReportDTO>(Queries.GetReportAll, null)).ToList();        
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            serviceResponse.Data = (await con.QueryAsync<ReportDTO>(Queries.GetReportAll, null)).ToList();
+            return serviceResponse;
+        }
 
         var codes = input.Split(',');
-        return (await con.QueryAsync<ReportDTO>(Queries.GetReportById, new { codes })).ToList();
+        serviceResponse.Data = (await con.QueryAsync<ReportDTO>(Queries.GetReportById, new { codes })).ToList();
+        return serviceResponse;
     }
 }
 
