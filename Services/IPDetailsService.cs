@@ -57,7 +57,8 @@ public class IPDetailsService : IIPDetails
     }
 
     async Task<IPDetailsDTO?> GetCachedDataAsync(string ip)
-    {        
+    {
+        Console.WriteLine("GetCachedDataAsync called");
         return await Task.Run(() =>
         {
             return _cachedIPs.TryGetValue(ip, out IPDetailsDTO? data) ? data : null;
@@ -66,6 +67,7 @@ public class IPDetailsService : IIPDetails
 
     async Task<IPDetailsDTO?> GetDatabaseDataAsync(string input)
     {
+        Console.WriteLine("GetDatabaseDataAsync called");
         var ipAddressEntity = await _context.Ipaddresses.FirstOrDefaultAsync(x => x.Ip == input);
         if (ipAddressEntity is null)
             return null;
@@ -84,6 +86,7 @@ public class IPDetailsService : IIPDetails
 
     async Task<IPDetailsDTO?> GetAPIDataAsync(string ip)
     {
+        Console.WriteLine("GetAPIDataAsync called");
         var request = new RestRequest($"https://ip2c.org/{ip}");
         var response = await _client.ExecuteGetAsync(request);
 
@@ -105,42 +108,45 @@ public class IPDetailsService : IIPDetails
 
     async Task AddOrUpdateDatabaseAsync(string ip, IPDetailsDTO data)
     {
+        Console.WriteLine("AddOrUpdateDatabaseAsync called");
 
-        var existingIp = await _context.Ipaddresses.FirstOrDefaultAsync(x => x.Ip == ip);
         var existingCountry = _context.Countries.FirstOrDefault(x => x.TwoLetterCode == data.TwoLetterCode.ToUpper());
-        Country newCountry;
 
-        //We found a new country, we will add it to the DB.
-        if (existingCountry is null)
+        // If we don't find a country, insert a new record
+        if (existingCountry == null)
         {
-            newCountry = new Country()
+            var newCountry = new Country
             {
-                TwoLetterCode = data.TwoLetterCode,
-                ThreeLetterCode = data.ThreeLetterCode,
-                Name = data.CountryName,
-                Id = _context.Countries.Max(x => x.Id) + 1
+                TwoLetterCode = data.TwoLetterCode.ToUpper(),
+                ThreeLetterCode = data.ThreeLetterCode.ToUpper(),
+                Name = data.CountryName
             };
 
-            await _context.Countries.AddAsync(newCountry);
+            _context.Countries.Add(newCountry);
             await _context.SaveChangesAsync();
+
+            existingCountry = newCountry;
         }
 
-        if (existingIp is not null)
+        // Create a new IP address correct country ID
+        var ipAddress = new Ipaddress
+        {
+            Ip = ip,
+            CountryId = existingCountry.Id,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        };
+
+        // If the IP address record already exists, update it
+        var existingIp = await _context.Ipaddresses.FirstOrDefaultAsync(x => x.Ip == ip);
+        if (existingIp != null)
         {
             existingIp.UpdatedAt = DateTime.Now;
             _context.Ipaddresses.Update(existingIp);
         }
         else
         {
-            var newIp = new Ipaddress
-            {
-                Ip = ip,
-                Id = _context.Ipaddresses.Max(x => x.Id) + 1,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            };
-
-            await _context.Ipaddresses.AddAsync(newIp);
+            _context.Ipaddresses.Add(ipAddress);
         }
 
         await _context.SaveChangesAsync();
@@ -148,17 +154,16 @@ public class IPDetailsService : IIPDetails
 
     async Task UpdateCacheAsync(string ip, IPDetailsDTO data)
     {
+        Console.WriteLine("UpdateCacheAsync called");
+
         await Task.Run(() =>
         {
-            lock (_dictLock)
+            _cachedIPs.TryAdd(ip, new IPDetailsDTO
             {
-                _cachedIPs.TryAdd(ip, new IPDetailsDTO
-                {
-                    CountryName = data.CountryName,
-                    TwoLetterCode = data.TwoLetterCode,
-                    ThreeLetterCode = data.ThreeLetterCode
-                });
-            }
+                CountryName = data.CountryName,
+                TwoLetterCode = data.TwoLetterCode,
+                ThreeLetterCode = data.ThreeLetterCode
+            });
         });
     }
 
