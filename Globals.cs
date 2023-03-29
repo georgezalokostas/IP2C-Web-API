@@ -11,6 +11,7 @@ global using System.Linq;
 global using Dapper;
 global using System.Text.RegularExpressions;
 global using RestSharp;
+global using static Microsoft.Toolkit.StringExtensions;
 global using static Globals;
 
 public class Globals

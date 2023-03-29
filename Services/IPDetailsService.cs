@@ -119,7 +119,7 @@ public class IPDetailsService : IIPDetails
             {
                 TwoLetterCode = data.TwoLetterCode.ToUpper(),
                 ThreeLetterCode = data.ThreeLetterCode.ToUpper(),
-                Name = data.CountryName.Substring(0, 49)
+                Name = data.CountryName.Truncate(50)
             };
 
             _context.Countries.Add(newCountry);
