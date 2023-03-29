@@ -1,12 +1,12 @@
 using Microsoft.Data.SqlClient;
 
-namespace IP2C_Web_API.Repositories;
+namespace IP2C_Web_API.Services;
 
-public class ReportRepository : IReport
+public class ReportService : IReport
 {
     readonly MasterContext _context;
 
-    public ReportRepository(MasterContext context)
+    public ReportService(MasterContext context)
     {
         _context = context;
     }

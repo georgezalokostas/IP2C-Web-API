@@ -1,7 +1,7 @@
 global using IP2C_Web_API.Interfaces;
 global using IP2C_Web_API.Models;
 global using IP2C_Web_API.Controllers;
-global using IP2C_Web_API.Repositories;
+global using IP2C_Web_API.Services;
 global using IP2C_Web_API.Helpers;
 global using System;
 global using System.Collections.Generic;

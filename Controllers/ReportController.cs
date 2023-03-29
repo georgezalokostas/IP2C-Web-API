@@ -4,11 +4,11 @@ namespace IP2C_Web_API.Controllers;
 [ApiController]
 public class ReportController : Controller
 {
-    readonly IReport _reportRepository;
+    readonly IReport _reportService;
 
-    public ReportController(IReport reportRepository)
+    public ReportController(IReport reportService)
     {
-        _reportRepository = reportRepository;
+        _reportService = reportService;
     }
 
     [HttpGet]
@@ -17,7 +17,7 @@ public class ReportController : Controller
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<List<ReportDTO>>> GetReports(string? codes = "")
     {
-        var ips = await _reportRepository.GetReport(codes);
+        var ips = await _reportService.GetReport(codes);
 
         return ips.Any() ? Ok(ips) : BadRequest(ModelState);
     }
