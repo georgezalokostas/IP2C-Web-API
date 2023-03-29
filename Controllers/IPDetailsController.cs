@@ -1,20 +1,35 @@
 namespace IP2C_Web_API.Controllers;
 
+//  
+//          lock (_packsLock) //Lock in order to avoid simultaneously check of ContainsKey and InsertPack
+//         {
+//             if (myPacks.ContainsKey(packDesc)) return;
+//         }
+
 [ApiController]
 public class IPDetailsController
 {
-    // readonly IReport _reportService;
+    readonly IIPDetails _IipDetails;
 
-    // public IPDetailsController(IReport reportService)
-    // {
-    //     _reportService = reportService;
-    // }
+    public IPDetailsController(IIPDetails ipDetails)
+    {
+        _IipDetails = ipDetails;
+    }
 
-    // [HttpGet("/api/GetIPDetails/{ip}")]
-    // [ProducesResponseType(typeof(List<ReportDTO>), StatusCodes.Status200OK)]
-    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    // public async Task<ActionResult<ServiceResponse<List<ReportDTO>>>> GetReports(string ip)
-    // {
-    //     return Ok(await _reportService.GetReport(ip));
-    // }
+    [HttpGet("/api/GetIPDetails/{ip?}")]
+    public async Task<ActionResult<ServiceResponse<IPDetailsDTO>>> GetIPDetails(string? ip)
+    {         
+
+
+
+
+        // if (string.IsNullOrWhiteSpace(ip))
+        // {
+        //     response.Message = "Invalid country codes provided. Please try again with valid codes.";
+        //     response.Success = false;
+        //     return NotFound(response);
+        // }
+
+        // return Ok(response);
+    }
 }
