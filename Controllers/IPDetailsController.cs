@@ -7,21 +7,21 @@ namespace IP2C_Web_API.Controllers;
 //         }
 
 [ApiController]
-public class IPDetailsController
+public class IPDetailsController : Controller
 {
-    readonly IIPDetails _IipDetails;
+    readonly IIPDetails _IipDetailsService;
 
-    public IPDetailsController(IIPDetails ipDetails)
+    public IPDetailsController(IIPDetails ipDetailsService)
     {
-        _IipDetails = ipDetails;
+        _IipDetailsService = ipDetailsService;
     }
 
     [HttpGet("/api/GetIPDetails/{ip?}")]
     public async Task<ActionResult<ServiceResponse<IPDetailsDTO>>> GetIPDetails(string? ip)
-    {         
+    {
 
-
-
+        var response = await _IipDetailsService.GetIPDetails(ip);
+        return Ok(response);
 
         // if (string.IsNullOrWhiteSpace(ip))
         // {

@@ -9,20 +9,20 @@ public class IPDetailsService : IIPDetails
         _context = context;
     }
 
-    public async Task<ServiceResponse<IPDetailsDTO>> GetIPDetails(string? codes)
+    public async Task<ServiceResponse<IPDetailsDTO>> GetIPDetails(string ip)
     {
         var serviceResponse = new ServiceResponse<IPDetailsDTO>();
 
-        serviceResponse.Data = await GetCachedData();
-
+        serviceResponse.Data = await GetCachedData(ip);
+        return serviceResponse; //Found in cache.
 
     }
 
-    async Task<IPDetailsDTO> GetCachedData()
+    async Task<IPDetailsDTO?> GetCachedData(string ip)
     {
-        await Task.Run(() =>
+        return await Task.Run(() =>
         {
-            
+            return _cachedIPs.TryGetValue(ip, out IPDetailsDTO? data) ? data : null;
         });
     }
 
