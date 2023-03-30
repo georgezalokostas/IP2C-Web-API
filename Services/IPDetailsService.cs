@@ -1,4 +1,3 @@
-using System.Net;
 namespace IP2C_Web_API.Services;
 
 public class IPDetailsService : IIPDetails
@@ -52,9 +51,9 @@ public class IPDetailsService : IIPDetails
 
     static bool ValidateIP(string input)
     {
-        if (string.IsNullOrWhiteSpace(input)) return false;
-
-        return new Regex(@"^([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3}$").IsMatch(input);
+        return string.IsNullOrWhiteSpace(input) ?
+                                          false :
+                                          new Regex(@"^([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\.([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])){3}$").IsMatch(input);
     }
 
     async Task<IPDetailsDTO?> GetCachedDataAsync(string ip)
@@ -88,14 +87,12 @@ public class IPDetailsService : IIPDetails
     async Task<IPDetailsDTO?> GetAPIDataAsync(string ip)
     {
         Console.WriteLine("GetAPIDataAsync called");
-        var request = new RestRequest($"https://ip2c.org/{ip}");
-        var response = await _client.ExecuteGetAsync(request);
+        var response = await _client.ExecuteGetAsync(new RestRequest($"https://ip2c.org/{ip}"));
 
         if (!response.IsSuccessful)
             return null;
 
-        var dataFromAPI = response.Content;
-        var splitData = dataFromAPI!.Split(';');
+        var splitData = response.Content!.Split(';');
 
         if (splitData.Length != 4) return null; //Something went wrong
 
@@ -111,15 +108,15 @@ public class IPDetailsService : IIPDetails
     {
         Console.WriteLine("AddOrUpdateDatabaseAsync called");
 
-        var existingCountry = _context.Countries.FirstOrDefault(x => x.TwoLetterCode == data.TwoLetterCode.ToUpper());
+        var existingCountry = _context.Countries.FirstOrDefault(x => x.TwoLetterCode == data.TwoLetterCode);
 
         // If we don't find a country, insert a new record
         if (existingCountry == null)
         {
             var newCountry = new Country
             {
-                TwoLetterCode = data.TwoLetterCode.ToUpper(),
-                ThreeLetterCode = data.ThreeLetterCode.ToUpper(),
+                TwoLetterCode = data.TwoLetterCode,
+                ThreeLetterCode = data.ThreeLetterCode,
                 Name = data.CountryName.Truncate(50)
             };
 
@@ -129,16 +126,7 @@ public class IPDetailsService : IIPDetails
             existingCountry = newCountry;
         }
 
-        // Create a new IP address correct country ID
-        var ipAddress = new Ipaddress
-        {
-            Ip = ip,
-            CountryId = existingCountry.Id,
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now
-        };
-
-        // If the IP address record already exists, update it
+        // If the IP address record already exists, update it. Else insert it
         var existingIp = await _context.Ipaddresses.FirstOrDefaultAsync(x => x.Ip == ip);
         if (existingIp != null)
         {
@@ -147,7 +135,13 @@ public class IPDetailsService : IIPDetails
         }
         else
         {
-            _context.Ipaddresses.Add(ipAddress);
+            _context.Ipaddresses.Add(new Ipaddress
+            {
+                Ip = ip,
+                CountryId = existingCountry.Id,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            });
         }
 
         await _context.SaveChangesAsync();
