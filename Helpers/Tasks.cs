@@ -5,6 +5,7 @@ public class Tasks
     readonly MasterContext _context;
     readonly Object _dictLock = new();
     RestClient _client;
+    ConcurrentDictionary<string, IPDetailsDTO> _cachedIPs = new();
 
     public Tasks(MasterContext context)
     {

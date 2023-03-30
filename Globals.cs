@@ -12,11 +12,3 @@ global using Dapper;
 global using System.Text.RegularExpressions;
 global using RestSharp;
 global using static Microsoft.Toolkit.StringExtensions;
-global using static Globals;
-
-public class Globals
-{
-    public static ConcurrentDictionary<string, IPDetailsDTO> _cachedIPs = new();
-    public static int _MAX_PARALLEL_NUM = Environment.ProcessorCount;
-    public static int _CHUNK_SIZE = 100;    
-}
