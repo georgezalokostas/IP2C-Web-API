@@ -1,12 +1,12 @@
 namespace IP2C_Web_API.Services;
 
-public class BackgroundRefreshService : BackgroundService
+public class SyncService : BackgroundService
 {
     int _oneHourInMS = 3600000;
-    int _tenSeconds = 10000;
+    int _30seconds = 30000;
     readonly IServiceProvider _services;
 
-    public BackgroundRefreshService(IServiceProvider services)
+    public SyncService(IServiceProvider services)
     {
         _services = services;
     }
@@ -15,8 +15,6 @@ public class BackgroundRefreshService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            Console.WriteLine("Background refresh started");
-
             var _context = _services.CreateScope().ServiceProvider.GetRequiredService<MasterContext>();
 
             var batchSize = 100;
@@ -38,8 +36,7 @@ public class BackgroundRefreshService : BackgroundService
                 page++;
             }
 
-            Console.WriteLine("Background refresh completed");
-            await Task.Delay(_tenSeconds, stoppingToken);
+            await Task.Delay(_30seconds, stoppingToken);
         }
     }
 
@@ -54,6 +51,7 @@ public class BackgroundRefreshService : BackgroundService
             return;
 
         //Update the database.
+        //FIXME: Cache works! Check the Database as well.
         await tasks.AddOrUpdateDatabaseAsync(ipObject.Ip, newIPDetails);
 
         //Update the cache.

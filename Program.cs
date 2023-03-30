@@ -6,7 +6,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MasterContext>();
 builder.Services.AddScoped<IReport, ReportService>();
 builder.Services.AddScoped<IIPDetails, IPDetailsService>();
-builder.Services.AddHostedService<BackgroundRefreshService>();
+builder.Services.AddHostedService<SyncService>();
 
 var app = builder.Build();
 
