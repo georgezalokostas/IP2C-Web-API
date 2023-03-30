@@ -5,8 +5,7 @@ public class Tasks
     readonly MasterContext _context;
     readonly Object _dictLock = new();
     RestClient _client;
-    ConcurrentDictionary<string, IPDetailsDTO> _cachedIPs = new();
-
+    
     public Tasks(MasterContext context)
     {
         _context = context;
@@ -108,7 +107,7 @@ public class Tasks
 
     public async Task UpdateCacheAsync(string ip, IPDetailsDTO data)
     {
-        Console.WriteLine($"UpdateCacheAsync called. Cache data size:{_cachedIPs.Count()}");
+        Console.WriteLine($"UpdateCacheAsync called. Cache data size:{_cachedIPs.Count}");
 
         await Task.Run(() =>
         {
