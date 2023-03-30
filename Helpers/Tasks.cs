@@ -107,7 +107,7 @@ public class Tasks
 
     public async Task UpdateCacheAsync(string ip, IPDetailsDTO data)
     {
-        Console.WriteLine("UpdateCacheAsync called");
+        Console.WriteLine($"UpdateCacheAsync called. Cache data size:{_cachedIPs.Count()}");
 
         await Task.Run(() =>
         {

@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 namespace IP2C_Web_API.Services;
 
 public class BackgroundRefreshService : BackgroundService
@@ -35,8 +36,20 @@ public class BackgroundRefreshService : BackgroundService
         }
     }
 
-    async Task CheckAndUpdateIpAsync(Ipaddress ip)
+    async Task CheckAndUpdateIpAsync(Ipaddress ipObject)
     {
-        
+        var tasks = new Tasks(_context);
+
+        //Fetch fresh data from API.
+        var newIPDetails = await tasks.GetAPIDataAsync(ipObject.Ip);
+
+        if (newIPDetails is null)
+            return;
+
+        //Update the database.
+        await tasks.AddOrUpdateDatabaseAsync(ipObject.Ip, newIPDetails);
+
+        //Update the cache.
+        await tasks.UpdateCacheAsync(ipObject.Ip, newIPDetails);
     }
 }
