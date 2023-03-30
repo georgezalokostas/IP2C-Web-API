@@ -6,6 +6,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MasterContext>();
 builder.Services.AddScoped<IReport, ReportService>();
 builder.Services.AddScoped<IIPDetails, IPDetailsService>();
+builder.Services.AddHostedService<BackgroundRefreshService>();
 
 var app = builder.Build();
 
@@ -15,6 +16,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//FIXME: Configure for HTTPS
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
