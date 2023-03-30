@@ -5,7 +5,7 @@ public class IPDetailsService : IIPDetails
 {
     readonly MasterContext _context;
     readonly RestClient _client;
-    readonly Object _dictLock = null!;
+    readonly Object _dictLock = new();
 
     public IPDetailsService(MasterContext context)
     {
@@ -159,12 +159,15 @@ public class IPDetailsService : IIPDetails
 
         await Task.Run(() =>
         {
-            _cachedIPs.TryAdd(ip, new IPDetailsDTO
+            lock (_dictLock)
             {
-                CountryName = data.CountryName,
-                TwoLetterCode = data.TwoLetterCode,
-                ThreeLetterCode = data.ThreeLetterCode
-            });
+                _cachedIPs.TryAdd(ip, new IPDetailsDTO
+                {
+                    CountryName = data.CountryName,
+                    TwoLetterCode = data.TwoLetterCode,
+                    ThreeLetterCode = data.ThreeLetterCode
+                });
+            }
         });
     }
 
