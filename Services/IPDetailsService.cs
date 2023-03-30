@@ -12,7 +12,7 @@ public class IPDetailsService : IIPDetails
         _client = new RestClient("https://ip2c.org/");
     }
 
-    public async Task<ServiceResponse<IPDetailsDTO>> GetIPDetails(string ip)
+    public async Task<ServiceResponse<IPDetailsDTO>> GetIPDetails(string? ip)
     {
         var serviceResponse = new ServiceResponse<IPDetailsDTO>();
 
@@ -23,33 +23,32 @@ public class IPDetailsService : IIPDetails
             return serviceResponse; //Empty string or invalid IP.
         }
 
-        serviceResponse.Data = await GetCachedDataAsync(ip);
+        serviceResponse.Data = await GetCachedDataAsync(ip!);
 
         //Found in cache.
         if (serviceResponse.Data is not null)
             return serviceResponse;
 
-        serviceResponse.Data = await GetDatabaseDataAsync(ip);
+        serviceResponse.Data = await GetDatabaseDataAsync(ip!);
 
         //Found in database.
         if (serviceResponse.Data is not null)
         {
-            await UpdateCacheAsync(ip, serviceResponse.Data);
+            await UpdateCacheAsync(ip!, serviceResponse.Data);
             return serviceResponse;
         }
 
-        serviceResponse.Data = await GetAPIDataAsync(ip);
+        serviceResponse.Data = await GetAPIDataAsync(ip!);
 
         //Found in API.
         if (serviceResponse.Data is not null)
-
-            await Task.WhenAll(UpdateCacheAsync(ip, serviceResponse.Data),
-                               AddOrUpdateDatabaseAsync(ip, serviceResponse.Data));
+            await Task.WhenAll(UpdateCacheAsync(ip!, serviceResponse.Data),
+                               AddOrUpdateDatabaseAsync(ip!, serviceResponse.Data));
 
         return serviceResponse;
     }
 
-    static bool ValidateIP(string input)
+    static bool ValidateIP(string? input)
     {
         return string.IsNullOrWhiteSpace(input) ?
                                           false :
@@ -128,12 +127,8 @@ public class IPDetailsService : IIPDetails
 
         // If the IP address record already exists, update it. Else insert it
         var existingIp = await _context.Ipaddresses.FirstOrDefaultAsync(x => x.Ip == ip);
-        if (existingIp != null)
-        {
-            existingIp.UpdatedAt = DateTime.Now;
-            _context.Ipaddresses.Update(existingIp);
-        }
-        else
+
+        if (existingIp is null)
         {
             _context.Ipaddresses.Add(new Ipaddress
             {
@@ -142,6 +137,11 @@ public class IPDetailsService : IIPDetails
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             });
+        }
+        else
+        {
+            existingIp.UpdatedAt = DateTime.Now;
+            _context.Ipaddresses.Update(existingIp);
         }
 
         await _context.SaveChangesAsync();
