@@ -35,8 +35,7 @@ public class IPDetailsService : IIPDetails
         //Found in database.
         if (serviceResponse.Data is not null)
         {
-            //FIXME: Maybe we don't have to await and return it immediately?
-            UpdateCacheAsync(ip, serviceResponse.Data);
+            await UpdateCacheAsync(ip, serviceResponse.Data);
             return serviceResponse;
         }
 
@@ -44,8 +43,8 @@ public class IPDetailsService : IIPDetails
 
         //Found in API.
         if (serviceResponse.Data is not null)
-            //FIXME: Maybe we don't have to await and return it immediately?
-            Task.WhenAll(UpdateCacheAsync(ip, serviceResponse.Data),
+
+            await Task.WhenAll(UpdateCacheAsync(ip, serviceResponse.Data),
                                AddOrUpdateDatabaseAsync(ip, serviceResponse.Data));
 
         return serviceResponse;
