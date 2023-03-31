@@ -2,7 +2,7 @@ namespace IP2C_Web_API.Services;
 
 public class SyncService : BackgroundService
 {
-    int _oneHourInMS = 3600000;
+    int _oneHour = 3600000;
     int _30seconds = 30000;
     readonly IServiceProvider _services;
 
@@ -51,8 +51,7 @@ public class SyncService : BackgroundService
             return;
 
         //Update the database.
-        //FIXME: Cache works! Check the Database as well.
-        await tasks.AddOrUpdateDatabaseAsync(ipObject.Ip, newIPDetails);
+        await tasks.SyncDatabaseAsync(ipObject.Ip, newIPDetails);
 
         //Update the cache.
         await tasks.UpdateCacheAsync(ipObject.Ip, newIPDetails);

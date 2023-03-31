@@ -5,13 +5,13 @@ public class Tasks
     readonly MasterContext _context;
     readonly Object _dictLock = new();
     RestClient _client;
-    
+
     public Tasks(MasterContext context)
     {
         _context = context;
         _client = new RestClient();
     }
- 
+
     public async Task<IPDetailsDTO?> GetCachedDataAsync(string ip)
     {
         Console.WriteLine("GetCachedDataAsync called");
@@ -121,5 +121,26 @@ public class Tasks
                 });
             }
         });
+    }
+
+    public async Task SyncDatabaseAsync(string ip, IPDetailsDTO newIPDetails)
+    {
+        var existingIp = await _context.Ipaddresses.FirstOrDefaultAsync(x => x.Ip == ip);
+        var existingCountry = await _context.Countries.FirstOrDefaultAsync(x => x.TwoLetterCode == newIPDetails.TwoLetterCode);
+
+        if (existingIp is null || existingCountry is null)
+            return;
+
+        existingIp.UpdatedAt = DateTime.Now;
+        existingIp.CountryId = existingCountry.Id;
+
+        existingCountry.TwoLetterCode = newIPDetails.TwoLetterCode;
+        existingCountry.ThreeLetterCode = newIPDetails.ThreeLetterCode;
+        existingCountry.Name = newIPDetails.CountryName.Truncate(50);
+
+        _context.Ipaddresses.Update(existingIp);
+        _context.Countries.Update(existingCountry);
+
+        await _context.SaveChangesAsync();
     }
 }
