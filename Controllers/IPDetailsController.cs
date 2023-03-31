@@ -16,7 +16,12 @@ public class IPDetailsController : Controller
     public async Task<ActionResult<ServiceResponse<IPDetailsDTO>>> GetIPDetails(string? ip)
     {
         var response = await _unitOfWork.IPDetails.GetIPDetails(ip);
-        await _unitOfWork.SaveAsync();
-        return response.Success == true ? Ok(response) : NotFound(response);
+
+        if (response.Success == true)
+        {
+            await _unitOfWork.SaveAsync();
+            return Ok(response);
+        }
+        return NotFound(response);
     }
 }
