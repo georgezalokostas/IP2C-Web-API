@@ -36,6 +36,7 @@ public class SyncService : BackgroundService
                 page++;
             }
 
+
             await Task.Delay(_30seconds, stoppingToken);
         }
     }
@@ -55,5 +56,7 @@ public class SyncService : BackgroundService
 
         //Update the cache.
         await tasks.UpdateCacheAsync(ipObject.Ip, newIPDetails);
+
+        await _context.SaveChangesAsync();
     }
 }

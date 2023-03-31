@@ -60,7 +60,6 @@ public class Tasks
         };
     }
 
-
     public async Task AddOrUpdateDatabaseAsync(string ip, IPDetailsDTO data)
     {
         Console.WriteLine("AddOrUpdateDatabaseAsync called");
@@ -78,7 +77,6 @@ public class Tasks
             };
 
             _context.Countries.Add(newCountry);
-            await _context.SaveChangesAsync();
 
             existingCountry = newCountry;
         }
@@ -101,8 +99,6 @@ public class Tasks
             existingIp.UpdatedAt = DateTime.Now;
             _context.Ipaddresses.Update(existingIp);
         }
-
-        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateCacheAsync(string ip, IPDetailsDTO data)
@@ -140,7 +136,5 @@ public class Tasks
 
         _context.Ipaddresses.Update(existingIp);
         _context.Countries.Update(existingCountry);
-
-        await _context.SaveChangesAsync();
     }
 }

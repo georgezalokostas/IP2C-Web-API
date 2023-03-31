@@ -1,3 +1,5 @@
+using IP2C_Web_API.Interface;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -6,6 +8,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MasterContext>();
 builder.Services.AddScoped<IReport, ReportService>();
 builder.Services.AddScoped<IIPDetails, IPDetailsService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddHostedService<SyncService>();
 
 var app = builder.Build();
