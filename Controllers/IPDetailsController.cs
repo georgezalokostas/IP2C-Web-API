@@ -12,6 +12,7 @@ public class IPDetailsController : Controller
         _unitOfWork = unitOfWork;
     }
 
+    [Authorize]
     [HttpGet("/api/GetIPDetails/{ip?}")]
     public async Task<ActionResult<ServiceResponse<IPDetailsDTO>>> GetIPDetails(string? ip)
     {

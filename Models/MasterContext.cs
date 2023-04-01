@@ -11,11 +11,11 @@ public partial class MasterContext : DbContext
     {
     }
 
-    public virtual DbSet<Country> Countries { get; set; } = null!;
+    public virtual DbSet<Country> Countries { get; set; }  = null!;
 
-    public virtual DbSet<Ipaddress> Ipaddresses { get; set; } = null!;
+    public virtual DbSet<Ipaddress> Ipaddresses { get; set; }  = null!;
 
-    public virtual DbSet<User> Users { get; set; } = null!;
+    public virtual DbSet<User> Users { get; set; }  = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
@@ -55,11 +55,6 @@ public partial class MasterContext : DbContext
                 .HasForeignKey(d => d.CountryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_IPAddresses_Countries");
-        });
-
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.Property(e => e.Id).ValueGeneratedNever();
         });
 
         OnModelCreatingPartial(modelBuilder);
