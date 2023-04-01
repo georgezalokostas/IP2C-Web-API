@@ -12,6 +12,7 @@ public class ReportController : Controller
         _unitOfWork = unitOfWork;
     }
 
+    [Authorize]
     [HttpGet("/api/GetReport/{codes?}")]
     public async Task<ActionResult<ServiceResponse<List<ReportDTO>>>> GetReports(string? codes = "")
     {
