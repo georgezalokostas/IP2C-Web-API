@@ -124,17 +124,17 @@ public class Tasks
         var existingIp = await _context.Ipaddresses.FirstOrDefaultAsync(x => x.Ip == ip);
         var existingCountry = await _context.Countries.FirstOrDefaultAsync(x => x.TwoLetterCode == newIPDetails.TwoLetterCode);
 
+        //We haven't found an IP or Country record, so we can't update anything
         if (existingIp is null || existingCountry is null)
             return;
 
+        //Update the UpdatedAt column only if CountryID changed
+        if (existingIp.CountryId == existingCountry.Id)
+            return;
+            
         existingIp.UpdatedAt = DateTime.Now;
         existingIp.CountryId = existingCountry.Id;
 
-        existingCountry.TwoLetterCode = newIPDetails.TwoLetterCode;
-        existingCountry.ThreeLetterCode = newIPDetails.ThreeLetterCode;
-        existingCountry.Name = newIPDetails.CountryName.Truncate(50);
-
         _context.Ipaddresses.Update(existingIp);
-        _context.Countries.Update(existingCountry);
     }
 }
