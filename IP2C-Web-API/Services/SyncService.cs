@@ -2,8 +2,7 @@ namespace IP2C_Web_API.Services;
 
 public class SyncService : BackgroundService
 {
-    int _oneHour = 3600000;
-    int _30seconds = 30000;
+    const int LOOP_TIME = 1 * 60000; //1 minute. Change to 60 * 60000 for 1 hour.
     readonly IServiceProvider _services;
 
     public SyncService(IServiceProvider services)
@@ -37,7 +36,7 @@ public class SyncService : BackgroundService
             }
 
 
-            await Task.Delay(_30seconds, stoppingToken);
+            await Task.Delay(LOOP_TIME, stoppingToken);
         }
     }
 
