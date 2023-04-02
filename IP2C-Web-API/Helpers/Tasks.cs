@@ -77,9 +77,11 @@ public class Tasks
             };
 
             _context.Countries.Add(newCountry);
+            await _context.SaveChangesAsync();
 
             existingCountry = newCountry;
         }
+
 
         // If the IP address record already exists, update it. Else insert it
         var existingIp = await _context.Ipaddresses.FirstOrDefaultAsync(x => x.Ip == ip);
@@ -99,6 +101,7 @@ public class Tasks
             existingIp.UpdatedAt = DateTime.Now;
             _context.Ipaddresses.Update(existingIp);
         }
+
     }
 
     public async Task UpdateCacheAsync(string ip, IPDetailsDTO data)

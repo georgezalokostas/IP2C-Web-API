@@ -17,12 +17,11 @@ public class IPDetailsController : Controller
     public async Task<ActionResult<ServiceResponse<IPDetailsDTO>>> GetIPDetails(string? ip)
     {
         var response = await _unitOfWork.IPDetails.GetIPDetails(ip);
+        await _unitOfWork.SaveAsync();
 
         if (response.Success == true)
-        {
-            await _unitOfWork.SaveAsync();
             return Ok(response);
-        }
+            
         return NotFound(response);
     }
 }
