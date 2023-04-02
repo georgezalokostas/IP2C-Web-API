@@ -18,7 +18,7 @@ public class ReportController : Controller
     {
         var response = await _unitOfWork.Report.GetReport(codes);
 
-        if (!response.Data!.Any())
+        if (response.Data == null || response.Data?.Count == 0)
         {
             response.Message = "Invalid country codes provided. Please try again with valid codes.";
             response.Success = false;
