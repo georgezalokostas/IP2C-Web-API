@@ -40,9 +40,15 @@ public class IPDetailsService : IIPDetails
 
         //Found in API.
         if (serviceResponse.Data is not null)
+        {
             await Task.WhenAll(tasks.UpdateCacheAsync(ip!, serviceResponse.Data),
                                tasks.AddOrUpdateDatabaseAsync(ip!, serviceResponse.Data));
 
+            return serviceResponse;
+        }
+
+        serviceResponse.Success = false;
+        serviceResponse.Message = "An error occured.";
         return serviceResponse;
     }
 
