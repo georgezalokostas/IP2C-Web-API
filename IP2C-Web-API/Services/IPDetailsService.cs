@@ -48,7 +48,7 @@ public class IPDetailsService : IIPDetails
         }
 
         serviceResponse.Success = false;
-        serviceResponse.Message = "An error occured.";
+        serviceResponse.Message = "An error occured while accessing the API.";
         return serviceResponse;
     }
 
