@@ -64,7 +64,7 @@ namespace IP2C_Web_Api.Tests.Controllers
             var serviceResponse = new ServiceResponse<List<ReportDTO>>
             {
                 Success = false,
-                Message = "Invalid country codes provided. Please try again with valid codes."
+                Message = "No data found for the provided country codes."
             };
 
             A.CallTo(() => unitOfWork.Report.GetReport(codes)).Returns(serviceResponse);
