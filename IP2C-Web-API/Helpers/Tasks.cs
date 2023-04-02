@@ -127,14 +127,30 @@ public class Tasks
         var existingIp = await _context.Ipaddresses.FirstOrDefaultAsync(x => x.Ip == ip);
         var existingCountry = await _context.Countries.FirstOrDefaultAsync(x => x.TwoLetterCode == newIPDetails.TwoLetterCode);
 
-        //We haven't found an IP or Country record, so we can't update anything
-        if (existingIp is null || existingCountry is null)
+        //We found a new country, we have to save it to the database.
+        if (existingCountry is null)
+        {
+            var newCountry = new Country
+            {
+                TwoLetterCode = newIPDetails.TwoLetterCode,
+                ThreeLetterCode = newIPDetails.ThreeLetterCode,
+                Name = newIPDetails.CountryName.Truncate(50)
+            };
+
+            _context.Countries.Add(newCountry);
+            await _context.SaveChangesAsync();
+
+            existingCountry = newCountry;
+        }
+
+        //We haven't found an IP, so we can't update anything
+        if (existingIp is null)
             return;
 
         //Update the UpdatedAt column only if CountryID changed
         if (existingIp.CountryId == existingCountry.Id)
             return;
-            
+
         existingIp.UpdatedAt = DateTime.Now;
         existingIp.CountryId = existingCountry.Id;
 
