@@ -4,6 +4,13 @@ namespace IP2C_Web_API.Services;
 
 public class ReportService : IReport
 {
+    const string GetReportByID = @"  SELECT CO.Name CountryName, COUNT(*) AddressesCount, MAX(IP.UpdatedAt) LastAddressUpdated
+                                    FROM IPAddresses IP INNER JOIN COUNTRIES CO ON IP.CountryId = CO.Id
+                                    WHERE CO.TwoLetterCode IN @codes GROUP BY CO.Name";
+
+    const string GetReportAll = @" SELECT CO.Name CountryName, COUNT(*) AddressesCount, MAX(IP.UpdatedAt) LastAddressUpdated
+                                   FROM IPAddresses IP INNER JOIN COUNTRIES CO ON IP.CountryId = CO.Id GROUP BY CO.Name";                                         
+
     readonly MasterContext _context;
     readonly IConfigurationBuilder? _builder = null;
 
@@ -25,12 +32,12 @@ public class ReportService : IReport
 
         if (string.IsNullOrWhiteSpace(input))
         {
-            serviceResponse.Data = (await con.QueryAsync<ReportDTO>(Queries.GetReportAll, null)).ToList();
+            serviceResponse.Data = (await con.QueryAsync<ReportDTO>(GetReportAll, null)).ToList();
             return serviceResponse;
         }
 
         var codes = input.Split(',');
-        serviceResponse.Data = (await con.QueryAsync<ReportDTO>(Queries.GetReportById, new { codes })).ToList();
+        serviceResponse.Data = (await con.QueryAsync<ReportDTO>(GetReportByID, new { codes })).ToList();
         return serviceResponse;
     }
 }
