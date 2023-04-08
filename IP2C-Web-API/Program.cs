@@ -47,7 +47,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//FIXME: Configure for HTTPS
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
