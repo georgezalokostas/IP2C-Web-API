@@ -45,6 +45,7 @@ The GetReport endpoint allows the user to retrieve a report of the number of IPs
 # Caching and Database Lookup for IP Details in the API
 When a user requests IP details from the API, the program first checks if the IP is in the cache. If the IP is found in the cache, it is returned instantly, reducing the need for a database query. If the IP is not in the cache, the program checks the database for the IP. If the IP is found in the database, it is retrieved and updated in the cache for future requests. If the IP is not found in the database, the program fetches the details from the IP2C API, stores it in the cache for future requests, and also stores it in the database to update the IP database. This process ensures that the API provides fast response times and caches commonly requested IPs for improved performance.
 
+The cache can store up to 10.000 data for memory efficiency, and discards the least used one after a new entry is added that exceeds the threshold.
 # Background Sync
 
 The API includes a background sync job that runs every hour to fetch all the IPs from the database in batches of 100 and updates the tables if anything has changed. The batching process is done with pagination, where an infinite loop initially fetches the first 100 data and then skips X times the data it has fetched until no more entries are found.
