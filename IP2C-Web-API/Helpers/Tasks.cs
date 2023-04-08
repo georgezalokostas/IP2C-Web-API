@@ -4,6 +4,7 @@ public class Tasks
 {
     readonly MasterContext _context;
     readonly Object _dictLock = new();
+
     RestClient _client;
 
     public Tasks(MasterContext context)
@@ -107,6 +108,7 @@ public class Tasks
     public async Task UpdateCacheAsync(string ip, IPDetailsDTO data)
     {
         Console.WriteLine($"UpdateCacheAsync called. Cache data size:{_cachedIPs.Count}");
+        int _maxCacheSize = 10000;
 
         await Task.Run(() =>
         {
@@ -118,6 +120,19 @@ public class Tasks
                     TwoLetterCode = data.TwoLetterCode,
                     ThreeLetterCode = data.ThreeLetterCode
                 });
+
+                _cachedDateTimes[ip] = DateTime.Now;
+
+                // Check if the cache has reached its limit and discard the least recently used entry if needed
+                if (_cachedIPs.Count > _maxCacheSize)
+                {
+                    var lastEntry = _cachedDateTimes.LastOrDefault(kv => kv.Value == _cachedDateTimes.Values.Min());
+                    if (lastEntry.Key != null)
+                    {
+                        _cachedIPs.TryRemove(lastEntry.Key, out _);
+                        _cachedDateTimes.TryRemove(lastEntry.Key, out _);
+                    }
+                }
             }
         });
     }
