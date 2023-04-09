@@ -5,16 +5,16 @@ This project is a RESTful API for storing and retrieving IP addresses and their 
 
 These dependencies should be installed as well:
 ```
-dotnet tool install --global dotnet-ef
+dotnet add package Dapper
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer 
 dotnet add package Microsoft.EntityFrameworkCore.Design
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 dotnet add package Microsoft.EntityFrameworkCore.Tools
-dotnet add package Dapper
-dotnet add package RestSharp
 dotnet add package Microsoft.Extensions.Configuration
 dotnet add package Microsoft.Toolkit
-dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer 
+dotnet add package RestSharp
 dotnet add package Swashbuckle.AspNetCore.Filters
+dotnet tool install --global dotnet-ef
 ```
 
 Also we can populate the database with some initial seed data from the data_seed.txt file, and then scaffold the DB like this:
