@@ -22,6 +22,13 @@ Also we can populate the database with some initial seed data from the data_seed
 ```
 dotnet ef dbcontext scaffold Name=DefaultConnection  Microsoft.EntityFrameworkCore.SqlServer -o Models
 ```
+
+On a mac, we should run these 2 commands as well:
+```
+brew install redis
+brew services start redis
+```
+
 # Endpoints
 __Authorization__
 
