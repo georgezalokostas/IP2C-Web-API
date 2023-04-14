@@ -16,11 +16,12 @@ public class CacheService : ICacheService
     public T GetData<T>(string key)
     {
         var value = _cacheDb.StringGet(key);
-        if (!string.IsNullOrEmpty(value))
-            return JsonSerializer.Deserialize<T>(value);
+        if (!string.IsNullOrWhiteSpace(value))
+            return JsonSerializer.Deserialize<T>(value!)!;
 
-        return default;
+        return default!;
     }
+
 
     public object RemoveData(string key)
     {
