@@ -3,10 +3,13 @@ namespace IP2C_Web_API.Services;
 public class IPDetailsService : IIPDetails
 {
     readonly MasterContext _context;
+    readonly ICacheService _cacheService;
+    const int _CACHED_MINUTES = 30;
 
-    public IPDetailsService(MasterContext context)
+    public IPDetailsService(MasterContext context, ICacheService cacheService)
     {
         _context = context;
+        _cacheService = cacheService;
     }
 
     public async Task<ServiceResponse<IPDetailsDTO>> GetIPDetails(string? ip)
@@ -21,8 +24,7 @@ public class IPDetailsService : IIPDetails
             return serviceResponse; //Empty string or invalid IP.
         }
 
-        //TODO: Get from redis cache.
-        //serviceResponse.Data = await tasks.GetCachedDataAsync(ip!);
+        serviceResponse.Data = _cacheService.GetData<IPDetailsDTO>(ip!);
 
         //Found in cache.
         if (serviceResponse.Data is not null)
@@ -33,8 +35,7 @@ public class IPDetailsService : IIPDetails
         //Found in database.
         if (serviceResponse.Data is not null)
         {
-            //TODO: Set to redis cache
-            //await tasks.UpdateCacheAsync(ip!, serviceResponse.Data);
+            _cacheService.SetData(ip!, serviceResponse.Data, DateTimeOffset.Now.AddMinutes(_CACHED_MINUTES));
             return serviceResponse;
         }
 
@@ -43,9 +44,8 @@ public class IPDetailsService : IIPDetails
         //Found in API.
         if (serviceResponse.Data is not null)
         {
-            //TODO: Set to redis cache
-            await Task.WhenAll(//tasks.UpdateCacheAsync(ip!, serviceResponse.Data),
-                               tasks.AddOrUpdateDatabaseAsync(ip!, serviceResponse.Data));
+            _cacheService.SetData(ip!, serviceResponse.Data, DateTimeOffset.Now.AddMinutes(_CACHED_MINUTES));
+            await tasks.AddOrUpdateDatabaseAsync(ip!, serviceResponse.Data);
 
             return serviceResponse;
         }
