@@ -13,10 +13,3 @@ global using System.Text.RegularExpressions;
 global using RestSharp;
 global using Microsoft.AspNetCore.Authorization;
 global using static Microsoft.Toolkit.StringExtensions;
-global using static Globals;
-
-public class Globals
-{
-    public static ConcurrentDictionary<string, IPDetailsDTO> _cachedIPs = new();
-    public static ConcurrentDictionary<string, DateTime> _cachedDateTimes = new();
-}
