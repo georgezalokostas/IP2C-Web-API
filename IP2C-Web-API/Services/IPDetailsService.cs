@@ -21,7 +21,8 @@ public class IPDetailsService : IIPDetails
             return serviceResponse; //Empty string or invalid IP.
         }
 
-        serviceResponse.Data = await tasks.GetCachedDataAsync(ip!);
+        //TODO: Get from redis cache.
+        //serviceResponse.Data = await tasks.GetCachedDataAsync(ip!);
 
         //Found in cache.
         if (serviceResponse.Data is not null)
@@ -32,7 +33,8 @@ public class IPDetailsService : IIPDetails
         //Found in database.
         if (serviceResponse.Data is not null)
         {
-            await tasks.UpdateCacheAsync(ip!, serviceResponse.Data);
+            //TODO: Set to redis cache
+            //await tasks.UpdateCacheAsync(ip!, serviceResponse.Data);
             return serviceResponse;
         }
 
@@ -41,7 +43,8 @@ public class IPDetailsService : IIPDetails
         //Found in API.
         if (serviceResponse.Data is not null)
         {
-            await Task.WhenAll(tasks.UpdateCacheAsync(ip!, serviceResponse.Data),
+            //TODO: Set to redis cache
+            await Task.WhenAll(//tasks.UpdateCacheAsync(ip!, serviceResponse.Data),
                                tasks.AddOrUpdateDatabaseAsync(ip!, serviceResponse.Data));
 
             return serviceResponse;

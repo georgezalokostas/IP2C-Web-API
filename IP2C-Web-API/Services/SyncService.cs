@@ -53,8 +53,8 @@ public class SyncService : BackgroundService
         //Update the database.
         await tasks.SyncDatabaseAsync(ipObject.Ip, newIPDetails);
 
-        //Update the cache.
-        await tasks.UpdateCacheAsync(ipObject.Ip, newIPDetails);
+        //TODO: Update the redis cache.
+        //await tasks.UpdateCacheAsync(ipObject.Ip, newIPDetails);
 
         await _context.SaveChangesAsync();
     }

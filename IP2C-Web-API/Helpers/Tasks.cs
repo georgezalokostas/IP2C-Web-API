@@ -13,15 +13,6 @@ public class Tasks
         _client = new RestClient();
     }
 
-    public async Task<IPDetailsDTO?> GetCachedDataAsync(string ip)
-    {
-        Console.WriteLine("GetCachedDataAsync called");
-        return await Task.Run(() =>
-        {
-            return _cachedIPs.TryGetValue(ip, out IPDetailsDTO? data) ? data : null;
-        });
-    }
-
     public async Task<IPDetailsDTO?> GetDatabaseDataAsync(string input)
     {
         Console.WriteLine("GetDatabaseDataAsync called");
@@ -103,38 +94,6 @@ public class Tasks
             _context.Ipaddresses.Update(existingIp);
         }
 
-    }
-
-    public async Task UpdateCacheAsync(string ip, IPDetailsDTO data)
-    {
-        Console.WriteLine($"UpdateCacheAsync called. Cache data size:{_cachedIPs.Count}");
-        int _maxCacheSize = 10000;
-
-        await Task.Run(() =>
-        {
-            lock (_dictLock)
-            {
-                _cachedIPs.TryAdd(ip, new IPDetailsDTO
-                {
-                    CountryName = data.CountryName,
-                    TwoLetterCode = data.TwoLetterCode,
-                    ThreeLetterCode = data.ThreeLetterCode
-                });
-
-                _cachedDateTimes[ip] = DateTime.Now;
-
-                // Check if the cache has reached its limit and discard the least recently used entry if needed
-                if (_cachedIPs.Count > _maxCacheSize)
-                {
-                    var lastEntry = _cachedDateTimes.LastOrDefault(kv => kv.Value == _cachedDateTimes.Values.Min());
-                    if (lastEntry.Key != null)
-                    {
-                        _cachedIPs.TryRemove(lastEntry.Key, out _);
-                        _cachedDateTimes.TryRemove(lastEntry.Key, out _);
-                    }
-                }
-            }
-        });
     }
 
     public async Task SyncDatabaseAsync(string ip, IPDetailsDTO newIPDetails)
