@@ -3,11 +3,14 @@ namespace IP2C_Web_API.Services;
 public class SyncService : BackgroundService
 {
     const int LOOP_TIME = 1 * 60000; //1 minute. Change to 60 * 60000 for 1 hour.
+    const int _CACHED_MINUTES = 20;
     readonly IServiceProvider _services;
+    readonly ICacheService _cacheService;
 
-    public SyncService(IServiceProvider services)
+    public SyncService(IServiceProvider services, ICacheService cacheService)
     {
         _services = services;
+        _cacheService = cacheService;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -53,8 +56,8 @@ public class SyncService : BackgroundService
         //Update the database.
         await tasks.SyncDatabaseAsync(ipObject.Ip, newIPDetails);
 
-        //TODO: Update the redis cache.
-        //await tasks.UpdateCacheAsync(ipObject.Ip, newIPDetails);
+        //TODO: Update the cache with only 30% of the data to avoid memory issues.
+        _cacheService.SetData(ipObject.Ip, newIPDetails, DateTimeOffset.Now.AddMinutes(_CACHED_MINUTES));
 
         await _context.SaveChangesAsync();
     }

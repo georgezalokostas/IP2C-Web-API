@@ -25,7 +25,7 @@ builder.Services.AddScoped<IReport, ReportService>();
 builder.Services.AddScoped<IIPDetails, IPDetailsService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthentication, Authentication>();
-builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddSingleton<ICacheService, CacheService>();
 builder.Services.AddHostedService<SyncService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

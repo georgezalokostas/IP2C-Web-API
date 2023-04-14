@@ -4,7 +4,7 @@ public class IPDetailsService : IIPDetails
 {
     readonly MasterContext _context;
     readonly ICacheService _cacheService;
-    const int _CACHED_MINUTES = 30;
+    const int _CACHED_MINUTES = 20;
 
     public IPDetailsService(MasterContext context, ICacheService cacheService)
     {

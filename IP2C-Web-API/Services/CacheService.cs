@@ -22,7 +22,6 @@ public class CacheService : ICacheService
         return default!;
     }
 
-
     public object RemoveData(string key)
     {
         var exists = _cacheDb.KeyExists(key);
