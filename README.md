@@ -13,6 +13,7 @@ dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Microsoft.Extensions.Configuration
 dotnet add package Microsoft.Toolkit
 dotnet add package RestSharp
+dotnet add package StackExchange.Redis
 dotnet add package Swashbuckle.AspNetCore.Filters
 dotnet tool install --global dotnet-ef
 ```
