@@ -20,11 +20,14 @@ builder.Services.AddSwaggerGen(c =>
 
     c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
-builder.Services.AddDbContext<MasterContext>();
-builder.Services.AddScoped<IReport, ReportService>();
-builder.Services.AddScoped<IIPDetails, IPDetailsService>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IAuthentication, Authentication>();
+builder.Services.AddDbContext<MasterContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+    ServiceLifetime.Singleton);
+builder.Services.AddSingleton<IReport, ReportService>();
+builder.Services.AddSingleton<IIPDetails, IPDetailsService>();
+builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
+builder.Services.AddSingleton<IAuthentication, Authentication>();
+builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
 builder.Services.AddSingleton<ICacheService, CacheService>();
 builder.Services.AddHostedService<SyncService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
