@@ -4,18 +4,19 @@ public class IPDetailsService : IIPDetails
 {
     readonly MasterContext _context;
     readonly ICacheService _cacheService;
+    readonly IDatabaseService _databaseService;
     const int _CACHED_MINUTES = 20;
 
-    public IPDetailsService(MasterContext context, ICacheService cacheService)
+    public IPDetailsService(MasterContext context, ICacheService cacheService, IDatabaseService databaseService)
     {
         _context = context;
         _cacheService = cacheService;
+        _databaseService = databaseService;
     }
 
     public async Task<ServiceResponse<IPDetailsDTO>> GetIPDetails(string? ip)
     {
         var serviceResponse = new ServiceResponse<IPDetailsDTO>();
-        var tasks = new Tasks(_context);
 
         if (!ValidateIP(ip))
         {
@@ -30,7 +31,7 @@ public class IPDetailsService : IIPDetails
         if (serviceResponse.Data is not null)
             return serviceResponse;
 
-        serviceResponse.Data = await tasks.GetDatabaseDataAsync(ip!);
+        serviceResponse.Data = await _databaseService.GetDatabaseDataAsync(ip!);
 
         //Found in database.
         if (serviceResponse.Data is not null)
@@ -39,13 +40,13 @@ public class IPDetailsService : IIPDetails
             return serviceResponse;
         }
 
-        serviceResponse.Data = await tasks.GetAPIDataAsync(ip!);
+        serviceResponse.Data = await _databaseService.GetAPIDataAsync(ip!);
 
         //Found in API.
         if (serviceResponse.Data is not null)
         {
             _cacheService.SetData(ip!, serviceResponse.Data, DateTimeOffset.Now.AddMinutes(_CACHED_MINUTES));
-            await tasks.AddOrUpdateDatabaseAsync(ip!, serviceResponse.Data);
+            await _databaseService.AddOrUpdateDatabaseAsync(ip!, serviceResponse.Data);
 
             return serviceResponse;
         }

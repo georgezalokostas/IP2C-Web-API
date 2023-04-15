@@ -4,21 +4,23 @@ public class SyncService : BackgroundService
 {
     const int LOOP_TIME = 1 * 60000; //1 minute. Change to 60 * 60000 for 1 hour.
     const int _CACHED_MINUTES = 20;
+    readonly MasterContext _context;
     readonly IServiceProvider _services;
     readonly ICacheService _cacheService;
+    readonly IDatabaseService _databaseService;
 
-    public SyncService(IServiceProvider services, ICacheService cacheService)
+    public SyncService(MasterContext context, IServiceProvider services, ICacheService cacheService, IDatabaseService databaseService)
     {
         _services = services;
         _cacheService = cacheService;
+        _databaseService = databaseService;
+        _context = context;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var _context = _services.CreateScope().ServiceProvider.GetRequiredService<MasterContext>();
-
             var batchSize = 100;
             var page = 1;
             var allIps = await _context.Ipaddresses.ToListAsync();
@@ -30,10 +32,10 @@ public class SyncService : BackgroundService
                 if (ips.Count == 0)
                     break;
 
-                Parallel.ForEach(ips, new ParallelOptions { CancellationToken = stoppingToken }, async ip =>
+                foreach (var ip in ips)
                 {
-                    await CheckAndUpdateIpAsync(ip, _services.CreateScope().ServiceProvider.GetRequiredService<MasterContext>());
-                });
+                    await CheckAndUpdateIpAsync(ip, _context);
+                }
 
                 page++;
             }
@@ -45,16 +47,14 @@ public class SyncService : BackgroundService
 
     async Task CheckAndUpdateIpAsync(Ipaddress ipObject, MasterContext _context)
     {
-        var tasks = new Tasks(_context);
-
         //Fetch fresh data from API.
-        var newIPDetails = await tasks.GetAPIDataAsync(ipObject.Ip);
+        var newIPDetails = await _databaseService.GetAPIDataAsync(ipObject.Ip);
 
         if (newIPDetails is null)
             return;
 
         //Update the database.
-        await tasks.SyncDatabaseAsync(ipObject.Ip, newIPDetails);
+        await _databaseService.SyncDatabaseAsync(ipObject.Ip, newIPDetails);
 
         //TODO: Update the cache with only 30% of the data to avoid memory issues.
         _cacheService.SetData(ipObject.Ip, newIPDetails, DateTimeOffset.Now.AddMinutes(_CACHED_MINUTES));
