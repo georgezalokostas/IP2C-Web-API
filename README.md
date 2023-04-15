@@ -11,6 +11,8 @@ dotnet add package Microsoft.EntityFrameworkCore.Design
 dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Microsoft.Extensions.Configuration
+dotnet add package Microsoft.Extensions.Json
+dotnet add package Microsoft.Extensions.Abstractions
 dotnet add package Microsoft.Toolkit
 dotnet add package RestSharp
 dotnet add package StackExchange.Redis
@@ -57,7 +59,7 @@ TODO: In Progress
 
 The API includes a background sync job that runs every hour to fetch all the IPs from the database in batches of 100 and updates the tables if anything has changed. The batching process is done with pagination, where an infinite loop initially fetches the first 100 data and then skips X times the data it has fetched until no more entries are found.
 
-Each batch is processed using a Parallel Foreach loop, where each item calls the IP2C API. If the country, TwoLetterCode, or ThreeLetterCode has changed, the database is updated. Finally, the cache is also updated, and the new requests will have the updated data.
+Each batch is processed by calling the IP2C API for each item. If the country, TwoLetterCode, or ThreeLetterCode has changed, the database is updated. Finally, the cache is also updated, and the new requests will have the updated data.
 
 This background sync feature ensures that the data in the database stays up-to-date and provides accurate information to users who query the API.
 
