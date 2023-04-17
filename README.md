@@ -53,7 +53,9 @@ The GetReport endpoint allows the user to retrieve a report of the number of IPs
     GET /api/GetReport/{codes} - returns a report of the number of IPs stored in the database for the specified countries, as determined by the provided two-letter country codes
     
 # Caching and Database Lookup for IP Details in the API
-TODO: In Progress
+This API uses Redis as a caching mechanism to improve performance and reduce the response time for frequently requested data. When a request is made for a specific IP address, the API first checks if the data is already stored in the Redis cache. If it is found in the cache, the API returns the cached data to the user without querying the database, which significantly reduces the response time.
+
+If the data is not found in the cache, the API queries the database for the requested data and stores it in Redis with a TTL (Time To Live) of 20 minutes. This means that the data will be available in the cache for 20 minutes and will expire after that period. After expiration, the cache will automatically remove the data, and subsequent requests for the same IP address will trigger a new database query to fetch the latest information.
 
 # Background Sync
 
