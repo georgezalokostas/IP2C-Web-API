@@ -19,14 +19,14 @@ dotnet add package Swashbuckle.AspNetCore.Filters
 dotnet tool install --global dotnet-ef
 ```
 
-Also we can populate the database with some initial seed data from the data_seed.txt file, and then scaffold the DB like this:
-```
-dotnet ef dbcontext scaffold Name=DefaultConnection  Microsoft.EntityFrameworkCore.SqlServer -o Models
-```
-
 We have also created a yaml file with the docker settings, and in order to start the API, we have to run
 ```
 docker-compose up -d
+```
+
+Optionally, we can populate the database with some initial seed data from the data_seed.txt file, and then scaffold the DB like this:
+```
+dotnet ef dbcontext scaffold Name=DefaultConnection  Microsoft.EntityFrameworkCore.SqlServer -o Models
 ```
 
 # Endpoints
