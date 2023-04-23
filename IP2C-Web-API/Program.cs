@@ -29,6 +29,7 @@ builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
 builder.Services.AddSingleton<IAuthentication, Authentication>();
 builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
 builder.Services.AddSingleton<ICacheService, CacheService>();
+builder.Services.AddScoped<IMessageProducer, MessageProducer>();
 builder.Services.AddHostedService<SyncService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
