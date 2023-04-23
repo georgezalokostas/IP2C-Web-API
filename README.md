@@ -56,6 +56,19 @@ This API uses Redis as a caching mechanism to improve performance and reduce the
 
 If the data is not found in the cache, the API queries the database for the requested data and stores it in Redis with a TTL (Time To Live) of 20 minutes. This means that the data will be available in the cache for 20 minutes and will expire after that period. After expiration, the cache will automatically remove the data, and subsequent requests for the same IP address will trigger a new database query to fetch the latest information.
 
+# RabbitMQ Messaging
+
+This project also utilizes RabbitMQ for message-based communication between components. The API publishes messages to a RabbitMQ queue named "queue" whenever new IP details are added or updated in the database. A console application subscribed to the same queue listens for these messages and processes them accordingly.
+
+To run the console application, navigate to the IP2C-Web-Api.MessageQueuing folder and run the following command:
+
+```
+dotnet run
+```
+
+This will start the subscriber and begin listening for messages on the "queue" queue. Any new messages received will be displayed in the console window.
+
+For more information on how to set up and use RabbitMQ in your project, refer to the official RabbitMQ documentation.
 # Background Sync
 
 The API includes a background sync job that runs every hour to fetch all the IPs from the database in batches of 100 and updates the tables if anything has changed. The batching process is done with pagination, where an infinite loop initially fetches the first 100 data and then skips X times the data it has fetched until no more entries are found.
