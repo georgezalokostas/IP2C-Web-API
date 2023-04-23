@@ -6,10 +6,12 @@ namespace IP2C_Web_API.Controllers;
 public class IPDetailsController : Controller
 {
     readonly IUnitOfWork _unitOfWork;
+    readonly IMessageProducer _messageProducer;
 
-    public IPDetailsController(IUnitOfWork unitOfWork)
+    public IPDetailsController(IUnitOfWork unitOfWork, IMessageProducer messageProducer)
     {
         _unitOfWork = unitOfWork;
+        _messageProducer = messageProducer;
     }
 
     [Authorize]
@@ -19,9 +21,8 @@ public class IPDetailsController : Controller
         var response = await _unitOfWork.IPDetails.GetIPDetails(ip);
         await _unitOfWork.SaveAsync();
 
-        if (response.Success == true)
-            return Ok(response);
-            
-        return NotFound(response);
+        _messageProducer.SendingMessage<IPDetailsDTO>(response.Data!);
+
+        return response.Success ? Ok(response) : NotFound(response);
     }
 }
