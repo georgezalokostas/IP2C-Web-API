@@ -31,7 +31,7 @@ public class SyncService : BackgroundService
 
                 if (ips.Count == 0)
                     break;
-
+               
                 foreach (var ip in ips)
                 {
                     await CheckAndUpdateIpAsync(ip, _context);
@@ -40,12 +40,12 @@ public class SyncService : BackgroundService
                 page++;
             }
 
-
+            await _context.SaveChangesAsync();
             await Task.Delay(LOOP_TIME, stoppingToken);
         }
     }
 
-    async Task CheckAndUpdateIpAsync(Ipaddress ipObject, MasterContext _context)
+    async Task CheckAndUpdateIpAsync(Ipaddress ipObject, MasterContext context)
     {
         //Fetch fresh data from API.
         var newIPDetails = await _databaseService.GetAPIDataAsync(ipObject.Ip);
@@ -58,7 +58,5 @@ public class SyncService : BackgroundService
 
         //TODO: Update the cache with only 30% of the data to avoid memory issues.
         _cacheService.SetData(ipObject.Ip, newIPDetails, DateTimeOffset.Now.AddMinutes(_CACHED_MINUTES));
-
-        await _context.SaveChangesAsync();
     }
 }
