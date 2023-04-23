@@ -2,6 +2,7 @@ using FakeItEasy;
 using FluentAssertions;
 using IP2C_Web_API.Controllers;
 using IP2C_Web_API.Interface;
+using IP2C_Web_API.Interfaces;
 using IP2C_Web_API.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ public class IPDetailsControllerTest
     {
         // Arrange
         var unitOfWork = A.Fake<IUnitOfWork>();
+        var messageProducer = A.Fake<IMessageProducer>();
         var serviceResponse = new ServiceResponse<IPDetailsDTO>
         {
             Data = new IPDetailsDTO
@@ -32,7 +34,7 @@ public class IPDetailsControllerTest
         A.CallTo(() => unitOfWork.IPDetails.GetIPDetails(ip)).Returns(serviceResponse);
 
         // Act
-        var response = await new IPDetailsController(unitOfWork).GetIPDetails(ip);
+        var response = await new IPDetailsController(unitOfWork, messageProducer).GetIPDetails(ip);
 
         // Assert
         response.Result.Should().BeOfType<OkObjectResult>()
@@ -54,6 +56,7 @@ public class IPDetailsControllerTest
     {
         // Arrange
         var unitOfWork = A.Fake<IUnitOfWork>();
+        var messageProducer = A.Fake<IMessageProducer>();
 
         A.CallTo(() => unitOfWork.IPDetails.GetIPDetails(ip)).Returns(new ServiceResponse<IPDetailsDTO>
         {
@@ -63,7 +66,7 @@ public class IPDetailsControllerTest
         );
 
         // Act
-        var response = await new IPDetailsController(unitOfWork).GetIPDetails(ip);
+        var response = await new IPDetailsController(unitOfWork,messageProducer).GetIPDetails(ip);
 
         // Assert
         response.Result.Should().BeOfType<NotFoundObjectResult>();
