@@ -14,6 +14,7 @@ dotnet add package Microsoft.Extensions.Configuration
 dotnet add package Microsoft.Extensions.Json
 dotnet add package Microsoft.Extensions.Abstractions
 dotnet add package Microsoft.Toolkit
+dotnet add package RabbitMQ.Client
 dotnet add package RestSharp
 dotnet add package Swashbuckle.AspNetCore.Filters
 dotnet tool install --global dotnet-ef
